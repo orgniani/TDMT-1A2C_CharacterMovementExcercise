@@ -1,0 +1,17 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public readonly struct ImpulseRequest
+{
+    public readonly Vector3 Direction;
+    public readonly float Force;
+
+    public ImpulseRequest(Vector3 direction, float force)
+    {
+        Direction = direction;
+        Force = force;
+    }
+
+    public Vector3 GetForceVector() => Force * Direction;
+}
