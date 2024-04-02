@@ -10,27 +10,32 @@ public class CharacterBody : MonoBehaviour
     [SerializeField] private bool enableLog = true;
     [SerializeField] private LayerMask floorMask;
 
-    private Rigidbody rigidBody;
-    private MovementRequest currentMovement = MovementRequest.InvalidRequest;
-    private bool isBrakeRequested = false;
-    private readonly List<ImpulseRequest> impulseRequests = new();
+    private Rigidbody _rigidbody;
+    private MovementRequest _currentMovement = MovementRequest.InvalidRequest;
+    private bool _isBrakeRequested = false;
+    private readonly List<ImpulseRequest> _impulseRequests = new();
     [SerializeField] private Vector3 floorCheckOffset = new Vector3(0, 0.001f, 0);
 
     public bool IsFalling { private set; get; }
 
     private void Reset()
     {
-        rigidBody = GetComponent<Rigidbody>();
+        _rigidbody = GetComponent<Rigidbody>();
+    }
+
+    private void OnValidate()
+    {
+        _rigidbody ??= GetComponent<Rigidbody>();
     }
 
     private void Awake()
     {
-        rigidBody = GetComponent<Rigidbody>();
+        _rigidbody = GetComponent<Rigidbody>();
     }
 
     private void FixedUpdate()
     {
-        if (isBrakeRequested)
+        if (_isBrakeRequested)
             Break();
 
         ManageMovement();
@@ -39,56 +44,61 @@ public class CharacterBody : MonoBehaviour
 
     public void SetMovement(MovementRequest movementRequest)
     {
-        currentMovement = movementRequest;
+        _currentMovement = movementRequest;
     }
 
     public void RequestBrake()
     {
-        isBrakeRequested = true;
+        _isBrakeRequested = true;
     }
 
     public void RequestImpulse(ImpulseRequest request)
     {
-        impulseRequests.Add(request);
+        _impulseRequests.Add(request);
     }
 
     private void Break()
     {
-        rigidBody.AddForce(-rigidBody.velocity * brakeMultiplier, ForceMode.Impulse);
-        isBrakeRequested = false;
+        _rigidbody.AddForce(-_rigidbody.velocity * brakeMultiplier, ForceMode.Impulse);
+        _isBrakeRequested = false;
+
         if (enableLog)
             Debug.Log($"{name}: Brake processed.");
     }
 
     private void ManageMovement()
     {
-        var velocity = rigidBody.velocity;
+        var velocity = _rigidbody.velocity;
         velocity.y = 0;
         IsFalling = !Physics.Raycast(transform.position + floorCheckOffset,
                                     -transform.up,
                                     out var hit,
                                     maxFloorDistance,
                                     floorMask);
-        if (!currentMovement.IsValid()
-            || velocity.magnitude >= currentMovement.GoalSpeed)
+
+        if (!_currentMovement.IsValid()
+            || velocity.magnitude >= _currentMovement.GoalSpeed)
             return;
-        var accelerationVector = currentMovement.GetAccelerationVector();
+
+        var accelerationVector = _currentMovement.GetAccelerationVector();
+
         if (!IsFalling)
         {
             accelerationVector = Vector3.ProjectOnPlane(accelerationVector, hit.normal);
             Debug.DrawRay(transform.position, accelerationVector, Color.cyan);
         }
+
         Debug.DrawRay(transform.position, accelerationVector, Color.red);
-        rigidBody.AddForce(accelerationVector, ForceMode.Force);
+        _rigidbody.AddForce(accelerationVector, ForceMode.Force);
     }
 
     private void ManageImpulseRequests()
     {
-        foreach (var request in impulseRequests)
+        foreach (var request in _impulseRequests)
         {
-            rigidBody.AddForce(request.GetForceVector(), ForceMode.Impulse);
+            _rigidbody.AddForce(request.GetForceVector(), ForceMode.Impulse);
         }
-        impulseRequests.Clear();
+        _impulseRequests.Clear();
     }
 
     private void OnDrawGizmos()

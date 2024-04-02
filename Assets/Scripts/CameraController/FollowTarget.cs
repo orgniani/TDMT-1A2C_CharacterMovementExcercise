@@ -8,6 +8,7 @@ public class FollowTarget : MonoBehaviour
     [SerializeField] private Vector3 offset = new(0, 3.5f, -5f);
     [SerializeField] private bool shouldSetOffsetInAwake;
     [SerializeField] private float speed = 10;
+
     public float rotationSpeed = 5;
     [SerializeField] private float minimumDistanceToRotate = .1f;
 
