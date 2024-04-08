@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class FollowTarget : MonoBehaviour
+public class FollowPlayer : MonoBehaviour
 {
     [SerializeField] private Transform target;
     [SerializeField] private Vector3 offset = new(0, 3.5f, -5f);
@@ -29,14 +27,20 @@ public class FollowTarget : MonoBehaviour
 
     private void FixedUpdate()
     {
-        var offsetPosition = target.TransformPoint(offset);
+        //CAMERA POSITION
+        Vector3 offsetPosition = target.TransformPoint(offset);
         transform.position = Vector3.Lerp(transform.position, offsetPosition, Time.deltaTime * speed);
-
-
+        
         if (Vector3.Distance(transform.position, offsetPosition) < minimumDistanceToRotate)
             return;
 
+        //CAMERA ROTATION
         var desiredRotation = target.rotation * Quaternion.Euler(transform.rotation.eulerAngles.x, 0, 0);
         transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, Time.deltaTime * rotationSpeed);
+    }
+
+    public void SetInputRotation(Vector2 input)
+    {
+
     }
 }

@@ -1,41 +1,54 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 public class Jump : MonoBehaviour
 {
-    [SerializeField] private CharacterBody body;
+    [SerializeField] private CharacterMovement body;
+    //[SerializeField] private JumpModel model;
+
     [SerializeField] private float jumpForce = 10;
+    [SerializeField] private int floorAngle = 30;
 
-    [SerializeField] private int maxJumpQty = 1;
-    private int currentJumpQty = 0;
+    [SerializeField] private float waitToJump = 0.5f;
 
-    [SerializeField] private float floorAngle = 30;
+    private bool shouldJump = true;
+    [SerializeField] private float waitToReset = 1f;
+
+    private bool shouldJumpOnRamp = true;
+
     [SerializeField] private bool enableLog = true;
 
     public event Action onJump = delegate { };
-    public event Action onLand = delegate { };
 
     private void Reset()
     {
-        body = GetComponent<CharacterBody>();
+        body = GetComponent<CharacterMovement>();
     }
 
     public bool TryJump()
     {
-        if (currentJumpQty >= maxJumpQty)
-        {
-            return false;
-        }
+        if (!shouldJump) return false;
+        if (!shouldJumpOnRamp) return false;
 
+        StartCoroutine(JumpSequence());
+        return true;
+    }
 
-        currentJumpQty++;
+    private IEnumerator JumpSequence()
+    {
+        shouldJump = false;
+
+        body.RequestBrake();
+
         onJump.Invoke();
+
+        yield return new WaitForSeconds(waitToJump);
 
         body.RequestImpulse(new ImpulseRequest(Vector3.up, jumpForce));
 
-        return true;
+        yield return new WaitForSeconds(waitToReset);
+
+        shouldJump = true;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -45,11 +58,21 @@ public class Jump : MonoBehaviour
 
         if (contactAngle <= floorAngle)
         {
-            currentJumpQty = 0;
-            onLand.Invoke();
+            shouldJumpOnRamp = true;
+
+            if (body.IsFalling)
+            {
+                body.RequestBrake();
+            }
+        }
+
+        else
+        {
+            shouldJumpOnRamp = false;
         }
 
         if (enableLog)
             Debug.Log($"{name}: Collided with normal angle: {contactAngle}");
     }
+
 }

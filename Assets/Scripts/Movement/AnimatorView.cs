@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AnimatorView : MonoBehaviour
@@ -8,10 +7,11 @@ public class AnimatorView : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private Rigidbody rigidBody;
     [SerializeField] private Jump jump;
-    [SerializeField] private CharacterBody body;
+    [SerializeField] private CharacterMovement body;
 
     [Header("Animator Parameters")]
     [SerializeField] private string jumpTriggerParameter = "jump";
+    [SerializeField] private string runningJumpTriggerParameter = "running_jump";
     [SerializeField] private string isFallingParameter = "is_falling";
     [SerializeField] private string horSpeedParameter = "hor_speed";
 
@@ -44,12 +44,21 @@ public class AnimatorView : MonoBehaviour
             animator.SetFloat(horSpeedParameter, speed);
 
         if (animator && body)
+        {
             animator.SetBool(isFallingParameter, body.IsFalling);
+        }
     }
 
     private void HandleJump()
     {
-        if (animator)
-            animator.SetTrigger(jumpTriggerParameter);
+        if (!animator) return;
+
+        animator.SetTrigger(jumpTriggerParameter);
+
+        //if (velocity == Vector3.zero)
+        //  animator.SetTrigger(jumpTriggerParameter);
+
+        //else
+        // animator.SetTrigger(runningJumpTriggerParameter);
     }
 }

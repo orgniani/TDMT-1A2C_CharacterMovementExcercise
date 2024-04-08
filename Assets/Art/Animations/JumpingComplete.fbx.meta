@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f66ab51ee82ea194daffb36ab36eb3e9
+guid: a5fb604923ce1fb458c81c9e0d59343c
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -33,22 +33,22 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: idle
+      name: JumpingComplete
       takeName: mixamo.com
       internalID: -203655887218126122
       firstFrame: 0
-      lastFrame: 117
+      lastFrame: 113
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 1
-      loopBlendPositionY: 1
-      loopBlendPositionXZ: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
       keepOriginalPositionY: 1
       keepOriginalPositionXZ: 0
@@ -880,7 +880,7 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 6a3396424be3927498b4430e8adbdfc1, type: 3}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 20ffb9b0d071ef84e8c9fd43aaae6c25, type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1

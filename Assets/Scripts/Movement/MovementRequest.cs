@@ -3,19 +3,10 @@ using UnityEngine;
 
 public readonly struct MovementRequest : IEquatable<MovementRequest>
 {
-    /// <summary>
-    /// Direction of the movement
-    /// </summary>
     public readonly Vector3 Direction;
 
-    /// <summary>
-    /// The acceleration for this movement
-    /// </summary>
     public readonly float Acceleration;
 
-    /// <summary>
-    /// Goal Speed for the movement
-    /// </summary>
     public readonly float GoalSpeed;
 
     public static MovementRequest InvalidRequest => new(Vector3.zero, 0, 0);
