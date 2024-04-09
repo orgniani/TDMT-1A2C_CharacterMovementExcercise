@@ -7,11 +7,12 @@ public class AnimatorView : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private Rigidbody rigidBody;
     [SerializeField] private Jump jump;
-    [SerializeField] private CharacterMovement body;
+    [SerializeField] private LedgeGrab ledgeGrab;
+    [SerializeField] private CharacterBody body;
 
     [Header("Animator Parameters")]
     [SerializeField] private string jumpTriggerParameter = "jump";
-    [SerializeField] private string runningJumpTriggerParameter = "running_jump";
+    [SerializeField] private string climbTriggerParameter = "climb";
     [SerializeField] private string isFallingParameter = "is_falling";
     [SerializeField] private string horSpeedParameter = "hor_speed";
 
@@ -20,7 +21,9 @@ public class AnimatorView : MonoBehaviour
         if (jump)
         {
             jump.onJump += HandleJump;
+            ledgeGrab.onClimb += HandleClimb;
         }
+
     }
 
     private void OnDisable()
@@ -28,6 +31,7 @@ public class AnimatorView : MonoBehaviour
         if (jump)
         {
             jump.onJump -= HandleJump;
+            ledgeGrab.onClimb -= HandleClimb;
         }
     }
 
@@ -60,5 +64,11 @@ public class AnimatorView : MonoBehaviour
 
         //else
         // animator.SetTrigger(runningJumpTriggerParameter);
+    }
+
+    private void HandleClimb()
+    {
+        if(!animator) return;
+        animator.SetTrigger(climbTriggerParameter);
     }
 }

@@ -2865,6 +2865,11 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &148608122 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5755406759223228440, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+  m_PrefabInstance: {fileID: 8541168266642136637}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &173407378
 GameObject:
   m_ObjectHideFlags: 0
@@ -15930,10 +15935,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   body: {fileID: 1097084207}
+  rigidBody: {fileID: 0}
   jumpForce: 10
   floorAngle: 30
   waitToJump: 0.5
-  waitToReset: 1
+  jumpCooldown: 1
   enableLog: 0
 --- !u!135 &1097084212
 SphereCollider:
@@ -29836,14 +29842,86 @@ MonoBehaviour:
   animator: {fileID: 2117042924}
   rigidBody: {fileID: 1097084209}
   jump: {fileID: 1097084211}
+  ledgeGrab: {fileID: 0}
   body: {fileID: 1097084207}
   jumpTriggerParameter: jump
-  runningJumpTriggerParameter: runningJump
+  climbTriggerParameter: climb
   isFallingParameter: is_falling
   horSpeedParameter: hor_speed
 --- !u!4 &564300765616293099 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 704803337722260245, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+  m_PrefabInstance: {fileID: 8541168266642136637}
+  m_PrefabAsset: {fileID: 0}
+--- !u!54 &564300765616293106 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 8098805426423278476, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+  m_PrefabInstance: {fileID: 8541168266642136637}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &564300765616293107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 148608122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71ec649fb357d684192dbce3bb6bfa1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  body: {fileID: 564300765616293111}
+  rigidBody: {fileID: 564300765616293106}
+  capsuleCollider: {fileID: 564300765616293116}
+  sphereCollider: {fileID: 564300765616293115}
+  brain: {fileID: 564300765616293114}
+  rotatePlayer: {fileID: 564300765616293113}
+  floorMask:
+    serializedVersion: 2
+    m_Bits: 8
+  climbForce: 4
+  waitToClimb: 0.4
+--- !u!114 &564300765616293111 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7507693741780633723, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+  m_PrefabInstance: {fileID: 8541168266642136637}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 148608122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3e0e800708e48c40a7cdf084598ca79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &564300765616293113 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5774598684288464199, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+  m_PrefabInstance: {fileID: 8541168266642136637}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 148608122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52d48d034e9c83f4d9af376025d9b61e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &564300765616293114 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2037512471706856233, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+  m_PrefabInstance: {fileID: 8541168266642136637}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 148608122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74594aea790b39a4584d3dd8ee1a1fb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!135 &564300765616293115 stripped
+SphereCollider:
+  m_CorrespondingSourceObject: {fileID: 7748104458052449859, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+  m_PrefabInstance: {fileID: 8541168266642136637}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &564300765616293116 stripped
+CapsuleCollider:
+  m_CorrespondingSourceObject: {fileID: 8372638052066189602, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
   m_PrefabInstance: {fileID: 8541168266642136637}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8541168266642136637
@@ -29895,6 +29973,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2037512471706856233, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: speed
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 2037512471706856233, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: ledgeGrab
+      value: 
+      objectReference: {fileID: 564300765616293107}
+    - target: {fileID: 2037512471706856233, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
       propertyPath: inputReader
       value: 
       objectReference: {fileID: 595523538}
@@ -29903,13 +29989,45 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 811304134}
     - target: {fileID: 2885302641010859004, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: jumpForce
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2885302641010859004, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: ledgeGrab
+      value: 
+      objectReference: {fileID: 564300765616293107}
+    - target: {fileID: 2885302641010859004, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: rigidBody
+      value: 
+      objectReference: {fileID: 564300765616293106}
+    - target: {fileID: 2885302641010859004, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: climbForce
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2885302641010859004, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: floorAngle
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 2885302641010859004, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
       propertyPath: waitToReset
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3769679048018353018, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3794601445162910317, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5755406759223228440, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 7162023858247520179, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: ledgeGrab
+      value: 
+      objectReference: {fileID: 564300765616293107}
     - target: {fileID: 7507693741780633723, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
       propertyPath: brakeMultiplier
       value: 0.8
@@ -29934,10 +30052,17 @@ PrefabInstance:
       propertyPath: m_Center.y
       value: 1.03
       objectReference: {fileID: 0}
+    - target: {fileID: 9202537981888433079, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5755406759223228440, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 564300765616293107}
   m_SourcePrefab: {fileID: 100100000, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

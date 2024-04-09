@@ -3,7 +3,8 @@ using System.Collections;
 using UnityEngine;
 public class Jump : MonoBehaviour
 {
-    [SerializeField] private CharacterMovement body;
+    [SerializeField] private CharacterBody body;
+    [SerializeField] private Rigidbody rigidBody;
     //[SerializeField] private JumpModel model;
 
     [SerializeField] private float jumpForce = 10;
@@ -12,7 +13,7 @@ public class Jump : MonoBehaviour
     [SerializeField] private float waitToJump = 0.5f;
 
     private bool shouldJump = true;
-    [SerializeField] private float waitToReset = 1f;
+    [SerializeField] private float jumpCooldown = 1f;
 
     private bool shouldJumpOnRamp = true;
 
@@ -22,15 +23,17 @@ public class Jump : MonoBehaviour
 
     private void Reset()
     {
-        body = GetComponent<CharacterMovement>();
+        body = GetComponent<CharacterBody>();
     }
 
     public bool TryJump()
     {
         if (!shouldJump) return false;
+
         if (!shouldJumpOnRamp) return false;
 
         StartCoroutine(JumpSequence());
+
         return true;
     }
 
@@ -46,7 +49,7 @@ public class Jump : MonoBehaviour
 
         body.RequestImpulse(new ImpulseRequest(Vector3.up, jumpForce));
 
-        yield return new WaitForSeconds(waitToReset);
+        yield return new WaitForSeconds(jumpCooldown);
 
         shouldJump = true;
     }

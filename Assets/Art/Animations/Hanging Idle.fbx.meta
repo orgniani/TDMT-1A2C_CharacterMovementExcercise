@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ba3cc6df92c6d2f4582e9a7a40bdc4d9
+guid: 056cb19c800ec124c8e90f587cd22a68
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -33,11 +33,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Landing
+      name: Hanging Idle
       takeName: mixamo.com
       internalID: -203655887218126122
       firstFrame: 0
-      lastFrame: 64
+      lastFrame: 140
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -46,11 +46,11 @@ ModelImporter:
       hasAdditiveReferencePose: 0
       loopTime: 0
       loopBlend: 0
-      loopBlendOrientation: 1
+      loopBlendOrientation: 0
       loopBlendPositionY: 1
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
-      keepOriginalPositionY: 1
+      keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
       heightFromFeet: 0
       mirror: 0

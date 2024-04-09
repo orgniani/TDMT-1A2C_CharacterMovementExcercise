@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CharacterBrain : MonoBehaviour
 {
-    [SerializeField] private CharacterMovement body;
+    [SerializeField] private CharacterBody body;
     [SerializeField] private InputReader inputReader;
     [SerializeField] private Jump jump;
 

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class CharacterMovement : MonoBehaviour
+public class CharacterBody : MonoBehaviour
 {
     [SerializeField] private float maxFloorDistance = .01f;
     [SerializeField] private float brakeMultiplier = 1;
@@ -63,7 +63,9 @@ public class CharacterMovement : MonoBehaviour
         var velocity = rigidBody.velocity;
         velocity.y = 0;
 
-        IsFalling = !Physics.Raycast(transform.position + floorCheckOffset, -transform.up, out var hit, maxFloorDistance, floorMask);
+        RaycastHit hit;
+
+        IsFalling = !Physics.Raycast(transform.position + floorCheckOffset, -transform.up, out hit, maxFloorDistance, floorMask);
 
         if (!currentMovement.IsValid() || velocity.magnitude >= currentMovement.GoalSpeed)
             return;
@@ -86,6 +88,7 @@ public class CharacterMovement : MonoBehaviour
         {
             rigidBody.AddForce(request.GetForceVector(), ForceMode.Impulse);
         }
+
         impulseRequests.Clear();
     }
 
