@@ -8,6 +8,7 @@ public class CharacterBrain : MonoBehaviour
 
     [SerializeField] private float speed = 10;
     [SerializeField] private float acceleration = 4;
+    [SerializeField] private float movementBreakMultiplier = 0.5f;
 
     [SerializeField] private Transform cameraTransform;
 
@@ -61,7 +62,7 @@ public class CharacterBrain : MonoBehaviour
                 Debug.Log($"{nameof(desiredDirection)} magnitude: {desiredDirection.magnitude}\t{nameof(input)} magnitude: {input.magnitude}");
             }
 
-            body.RequestBrake();
+            body.RequestBrake(movementBreakMultiplier);
         }
 
         desiredDirection = new Vector3(input.x, 0, input.y);

@@ -99,6 +99,7 @@ GameObject:
   - component: {fileID: 2037512471706856233}
   - component: {fileID: 5774598684288464199}
   - component: {fileID: 2885302641010859004}
+  - component: {fileID: 2661739974639584771}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -169,10 +170,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.35
+  m_Radius: 0.3
   m_Height: 1.5
   m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: 0}
+  m_Center: {x: 0, y: 1.03, z: 0}
 --- !u!135 &7748104458052449859
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -192,8 +193,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.25
-  m_Center: {x: 0, y: 0.25, z: 0}
+  m_Radius: 0.19
+  m_Center: {x: 0, y: 0.19, z: 0}
 --- !u!114 &7507693741780633723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,11 +208,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxFloorDistance: 0.7
-  brakeMultiplier: 1
+  landBrakeMultiplier: 1
   floorMask:
     serializedVersion: 2
     m_Bits: 8
-  floorCheckOffset: {x: 0, y: 0.001, z: 0}
+  floorCheckOffset: {x: 0, y: 0.1, z: 0}
 --- !u!114 &2037512471706856233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229,6 +230,7 @@ MonoBehaviour:
   jump: {fileID: 2885302641010859004}
   speed: 12
   acceleration: 15
+  movementBreakMultiplier: 0.5
   cameraTransform: {fileID: 0}
   enableLog: 0
 --- !u!114 &5774598684288464199
@@ -259,11 +261,42 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   body: {fileID: 7507693741780633723}
-  jumpForce: 5
-  floorAngle: 30
+  rigidBody: {fileID: 8098805426423278476}
   waitToJump: 0.5
-  waitToReset: 1.2
+  jumpForce: 5
+  floorAngle: 45
+  jumpBrakeMultiplier: 1
+  waitToFall: 0.3
+  fallSpeed: 3
+  fallAcceleration: 1
+  floorMask:
+    serializedVersion: 2
+    m_Bits: 8
+  jumpCooldown: 1
   enableLog: 0
+--- !u!114 &2661739974639584771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5755406759223228440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71ec649fb357d684192dbce3bb6bfa1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  body: {fileID: 7507693741780633723}
+  rigidBody: {fileID: 8098805426423278476}
+  capsuleCollider: {fileID: 8372638052066189602}
+  sphereCollider: {fileID: 7748104458052449859}
+  brain: {fileID: 2037512471706856233}
+  rotatePlayer: {fileID: 5774598684288464199}
+  floorMask:
+    serializedVersion: 2
+    m_Bits: 8
+  climbForce: 4
+  waitToClimb: 0.5
 --- !u!1 &9202537981888433079
 GameObject:
   m_ObjectHideFlags: 0
@@ -436,8 +469,9 @@ MonoBehaviour:
   animator: {fileID: 3769679048018353018}
   rigidBody: {fileID: 8098805426423278476}
   jump: {fileID: 2885302641010859004}
+  ledgeGrab: {fileID: 2661739974639584771}
   body: {fileID: 7507693741780633723}
   jumpTriggerParameter: jump
-  runningJumpTriggerParameter: running_jump
+  climbTriggerParameter: climb
   isFallingParameter: is_falling
   horSpeedParameter: hor_speed

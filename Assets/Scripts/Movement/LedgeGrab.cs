@@ -32,7 +32,10 @@ public class LedgeGrab : MonoBehaviour
             if (!shouldClimb) return;
 
             RaycastHit downHit;
-            Vector3 lineDownStart = (transform.position + Vector3.up * 1.5f) + transform.forward;
+
+            //Vector3 lineDownStart = (transform.position + Vector3.up * 1.5f) + transform.forward;
+
+            Vector3 lineDownStart = (transform.position + Vector3.up * 1f) + transform.forward;
             Vector3 lineDownEnd = (transform.position + Vector3.up * 0.7f) + transform.forward;
 
             Physics.Linecast(lineDownStart, lineDownEnd, out downHit, floorMask);
@@ -105,7 +108,7 @@ public class LedgeGrab : MonoBehaviour
 
         rigidBody.useGravity = true;
 
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.3f);
 
         StartMovingWhenStopHanging();
 

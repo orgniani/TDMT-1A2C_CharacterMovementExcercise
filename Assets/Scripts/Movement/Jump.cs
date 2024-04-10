@@ -7,12 +7,20 @@ public class Jump : MonoBehaviour
     [SerializeField] private Rigidbody rigidBody;
     //[SerializeField] private JumpModel model;
 
+    [SerializeField] private float waitToJump = 0.5f;
     [SerializeField] private float jumpForce = 10;
     [SerializeField] private int floorAngle = 30;
 
-    [SerializeField] private float waitToJump = 0.5f;
+    [SerializeField] private float jumpBrakeMultiplier = 1f;
+
+    [SerializeField] private float waitToFall = 0.3f;
+    [SerializeField] private float fallSpeed = 1f;
+    [SerializeField] private float fallAcceleration = 1f;
+
+    [SerializeField] private LayerMask floorMask;
 
     private bool shouldJump = true;
+    private bool isJumping = true;
     [SerializeField] private float jumpCooldown = 1f;
 
     private bool shouldJumpOnRamp = true;
@@ -41,13 +49,19 @@ public class Jump : MonoBehaviour
     {
         shouldJump = false;
 
-        body.RequestBrake();
+        body.RequestBrake(jumpBrakeMultiplier);
 
         onJump.Invoke();
+
+        isJumping = true;
 
         yield return new WaitForSeconds(waitToJump);
 
         body.RequestImpulse(new ImpulseRequest(Vector3.up, jumpForce));
+
+        //yield return new WaitForSeconds(waitToFall);
+
+        //body.SetMovement(new MovementRequest(Vector3.down, fallSpeed, fallAcceleration));
 
         yield return new WaitForSeconds(jumpCooldown);
 
@@ -59,14 +73,12 @@ public class Jump : MonoBehaviour
         var contact = collision.contacts[0];
         var contactAngle = Vector3.Angle(contact.normal, Vector3.up);
 
+        if (contactAngle >= 90)
+            contactAngle = 0;
+
         if (contactAngle <= floorAngle)
         {
             shouldJumpOnRamp = true;
-
-            if (body.IsFalling)
-            {
-                body.RequestBrake();
-            }
         }
 
         else

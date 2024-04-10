@@ -5,7 +5,8 @@ using UnityEngine;
 public class CharacterBody : MonoBehaviour
 {
     [SerializeField] private float maxFloorDistance = .01f;
-    [SerializeField] private float brakeMultiplier = 1;
+    private float brakeMultiplier = 1;
+    [SerializeField] private float landBrakeMultiplier = 1;
 
     [SerializeField] private LayerMask floorMask;
     [SerializeField] private Vector3 floorCheckOffset = new Vector3(0, 0.001f, 0);
@@ -16,6 +17,7 @@ public class CharacterBody : MonoBehaviour
 
     private readonly List<ImpulseRequest> impulseRequests = new();
 
+    private bool isOnAir = false;
     public bool IsFalling { private set; get; }
 
     private void Reset()
@@ -42,8 +44,9 @@ public class CharacterBody : MonoBehaviour
         currentMovement = movementRequest;
     }
 
-    public void RequestBrake()
+    public void RequestBrake(float brake)
     {
+        brakeMultiplier = brake;
         isBrakeRequested = true;
     }
 
@@ -78,6 +81,8 @@ public class CharacterBody : MonoBehaviour
             Debug.DrawRay(transform.position, accelerationVector, Color.cyan);
         }
 
+        else isOnAir = true;
+
         Debug.DrawRay(transform.position, accelerationVector, Color.red);
         rigidBody.AddForce(accelerationVector, ForceMode.Force);
     }
@@ -92,9 +97,21 @@ public class CharacterBody : MonoBehaviour
         impulseRequests.Clear();
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (floorMask == (floorMask | (1 << collision.gameObject.layer)))
+        {
+            if (!isOnAir) return;
+
+            RequestBrake(landBrakeMultiplier);
+            isOnAir = false;
+        }
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
         Gizmos.DrawRay(transform.position + floorCheckOffset, -transform.up * maxFloorDistance);
     }
+
 }
