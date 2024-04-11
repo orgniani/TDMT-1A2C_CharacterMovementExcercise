@@ -3,12 +3,16 @@ using UnityEngine;
 public class FollowPlayer : MonoBehaviour
 {
     [SerializeField] private Transform target;
-    [SerializeField] private Vector3 offset = new(0, 3.5f, -5f);
-    [SerializeField] private bool shouldSetOffsetInAwake;
+    [SerializeField] private float offsetUp = 2f;
     [SerializeField] private float speed = 10;
 
-    public float rotationSpeed = 5;
-    [SerializeField] private float minimumDistanceToRotate = .1f;
+    [SerializeField] private float distance = 5f;
+    [SerializeField] private float rotationSpeed = 5f;
+    [SerializeField] private float minVerticalAngle = -30f;
+    [SerializeField] private float maxVerticalAngle = 60f;
+
+    private float currentX = 0f;
+    private float currentY = 0f;
 
     private void Awake()
     {
@@ -18,29 +22,34 @@ public class FollowPlayer : MonoBehaviour
             enabled = false;
             return;
         }
+    }
 
-        if (shouldSetOffsetInAwake)
-        {
-            offset = target.position - transform.position;
-        }
+    private void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void FixedUpdate()
     {
-        //CAMERA POSITION
-        Vector3 offsetPosition = target.TransformPoint(offset);
-        transform.position = Vector3.Lerp(transform.position, offsetPosition, Time.deltaTime * speed);
-        
-        if (Vector3.Distance(transform.position, offsetPosition) < minimumDistanceToRotate)
+        if (!target)
             return;
 
-        //CAMERA ROTATION
-        var desiredRotation = target.rotation * Quaternion.Euler(transform.rotation.eulerAngles.x, 0, 0);
-        transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, Time.deltaTime * rotationSpeed);
+        Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
+
+        Vector3 offset = Vector3.up * offsetUp;
+
+        Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
+        Vector3 position = rotation * negDistance + target.position + offset;
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, speed * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, position, speed * Time.deltaTime);
     }
 
     public void SetInputRotation(Vector2 input)
     {
-
+        currentX += input.x * speed * Time.deltaTime;
+        currentY -= input.y * rotationSpeed * Time.deltaTime;
+        currentY = Mathf.Clamp(currentY, minVerticalAngle, maxVerticalAngle);
     }
 }

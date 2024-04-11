@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class LedgeGrab : MonoBehaviour
@@ -11,12 +10,11 @@ public class LedgeGrab : MonoBehaviour
     [SerializeField] private Collider capsuleCollider;
     [SerializeField] private Collider sphereCollider;
 
-    [SerializeField] private CharacterBrain brain;
     [SerializeField] private RotationBasedOnVelocity rotatePlayer;
 
     [SerializeField] private LayerMask floorMask;
 
-    private bool isHanging = false;
+    public bool isHanging = false;
     private bool shouldClimb = true;
 
     [SerializeField] private float climbForce = 3;
@@ -75,7 +73,7 @@ public class LedgeGrab : MonoBehaviour
 
     private void StopMovingWhenHanging()
     {
-        brain.enabled = false;
+        //brain.enabled = false;
         rotatePlayer.enabled = false;
         capsuleCollider.enabled = false;
         sphereCollider.enabled = false;
@@ -84,7 +82,7 @@ public class LedgeGrab : MonoBehaviour
 
     private void StartMovingWhenStopHanging()
     {
-        brain.enabled = true;
+        //brain.enabled = true;
         rotatePlayer.enabled = true;
         capsuleCollider.enabled = true;
         sphereCollider.enabled = true;
@@ -99,7 +97,7 @@ public class LedgeGrab : MonoBehaviour
         yield return new WaitForSeconds(waitToClimb);
 
         rigidBody.useGravity = true;
-        isHanging = false;
+        //isHanging = false;
 
         body.RequestImpulse(new ImpulseRequest(Vector3.up, climbForce));
         body.RequestImpulse(new ImpulseRequest(transform.forward, climbForce/2));
@@ -108,9 +106,14 @@ public class LedgeGrab : MonoBehaviour
 
         rigidBody.useGravity = true;
 
+        //MAKE THIS A VARIABLE (the time lol)
         yield return new WaitForSeconds(0.3f);
 
         StartMovingWhenStopHanging();
+
+        yield return new WaitForSeconds(0.3f);
+
+        isHanging = false;
 
         shouldClimb = true;
     }

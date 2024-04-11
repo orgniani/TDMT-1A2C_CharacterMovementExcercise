@@ -5,6 +5,8 @@ public class CharacterBrain : MonoBehaviour
     [SerializeField] private CharacterBody body;
     [SerializeField] private InputReader inputReader;
     [SerializeField] private Jump jump;
+    [SerializeField] private LedgeGrab grab;
+    [SerializeField] private FollowPlayer cameraController;
 
     [SerializeField] private float speed = 10;
     [SerializeField] private float acceleration = 4;
@@ -16,9 +18,10 @@ public class CharacterBrain : MonoBehaviour
 
     private Vector3 desiredDirection;
 
+    Vector2 input;
+
     private void Awake()
     {
-
         if (!body)
         {
             Debug.LogError($"{name}: {nameof(body)} is null!" +
@@ -52,10 +55,12 @@ public class CharacterBrain : MonoBehaviour
 
     public Vector3 GetDesiredDirection() => desiredDirection;
 
-    private void HandleMovementInput(Vector2 input)
+    private void FixedUpdate()
     {
+        if (grab.isHanging) return;
+
         if (desiredDirection.magnitude > Mathf.Epsilon
-            && input.magnitude < Mathf.Epsilon)
+          && input.magnitude < Mathf.Epsilon)
         {
             if (enableLog)
             {
@@ -65,20 +70,36 @@ public class CharacterBrain : MonoBehaviour
             body.RequestBrake(movementBreakMultiplier);
         }
 
-        desiredDirection = new Vector3(input.x, 0, input.y);
+        Vector3 movementInput = input;
 
-        if (cameraTransform)
-        {
-            desiredDirection = cameraTransform.TransformDirection(desiredDirection);
-            desiredDirection.y = 0;
-        }
+        desiredDirection = TransformDirectionRelativeToCamera(movementInput);
 
         body.SetMovement(new MovementRequest(desiredDirection, speed, acceleration));
     }
 
+    private void HandleMovementInput(Vector2 input)
+    {
+        this.input = input;
+    }
+
+    private Vector3 TransformDirectionRelativeToCamera(Vector2 input)
+    {
+        Vector3 direction = new Vector3(input.x, 0, input.y);
+
+        if (cameraTransform)
+        {
+            Vector3 cameraForward = cameraTransform.forward;
+            cameraForward.y = 0;
+
+            direction = Quaternion.LookRotation(cameraForward) * direction;
+        }
+
+        return direction.normalized; 
+    }
+
     private void HandleCameraInput(Vector2 input)
     {
-        //cameraController.SetInputRotation(input);
+        cameraController.SetInputRotation(input);
     }
 
     private void HandleJumpInput()

@@ -13,14 +13,7 @@ public class Jump : MonoBehaviour
 
     [SerializeField] private float jumpBrakeMultiplier = 1f;
 
-    [SerializeField] private float waitToFall = 0.3f;
-    [SerializeField] private float fallSpeed = 1f;
-    [SerializeField] private float fallAcceleration = 1f;
-
-    [SerializeField] private LayerMask floorMask;
-
     private bool shouldJump = true;
-    private bool isJumping = true;
     [SerializeField] private float jumpCooldown = 1f;
 
     private bool shouldJumpOnRamp = true;
@@ -40,6 +33,7 @@ public class Jump : MonoBehaviour
 
         if (!shouldJumpOnRamp) return false;
 
+        //body.RequestImpulse(new ImpulseRequest(Vector3.up, jumpForce));
         StartCoroutine(JumpSequence());
 
         return true;
@@ -53,15 +47,9 @@ public class Jump : MonoBehaviour
 
         onJump.Invoke();
 
-        isJumping = true;
-
         yield return new WaitForSeconds(waitToJump);
 
         body.RequestImpulse(new ImpulseRequest(Vector3.up, jumpForce));
-
-        //yield return new WaitForSeconds(waitToFall);
-
-        //body.SetMovement(new MovementRequest(Vector3.down, fallSpeed, fallAcceleration));
 
         yield return new WaitForSeconds(jumpCooldown);
 

@@ -12614,11 +12614,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 564300765616293099}
-  offset: {x: 0, y: 3.5, z: -5}
-  shouldSetOffsetInAwake: 0
-  speed: 8
-  rotationSpeed: 3
-  minimumDistanceToRotate: 0.1
+  offsetUp: 1.5
+  speed: 10
+  distance: 3
+  rotationSpeed: 10
+  minVerticalAngle: 5
+  maxVerticalAngle: 60
 --- !u!1 &814863792
 GameObject:
   m_ObjectHideFlags: 0
@@ -15871,6 +15872,8 @@ MonoBehaviour:
   body: {fileID: 1097084207}
   inputReader: {fileID: 595523538}
   jump: {fileID: 1097084211}
+  grab: {fileID: 0}
+  cameraController: {fileID: 0}
   speed: 12
   acceleration: 15
   movementBreakMultiplier: 0.5
@@ -15936,12 +15939,6 @@ MonoBehaviour:
   jumpForce: 10
   floorAngle: 30
   jumpBrakeMultiplier: 1
-  waitToFall: 0.3
-  fallSpeed: 1
-  fallAcceleration: 1
-  floorMask:
-    serializedVersion: 2
-    m_Bits: 0
   jumpCooldown: 1
   enableLog: 0
 --- !u!135 &1097084212
@@ -29856,6 +29853,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 704803337722260245, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
   m_PrefabInstance: {fileID: 8541168266642136637}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &564300765616293100 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2661739974639584771, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+  m_PrefabInstance: {fileID: 8541168266642136637}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71ec649fb357d684192dbce3bb6bfa1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &8541168266642136637
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29905,6 +29913,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2037512471706856233, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: grab
+      value: 
+      objectReference: {fileID: 564300765616293100}
+    - target: {fileID: 2037512471706856233, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: enableLog
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2037512471706856233, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
       propertyPath: inputReader
       value: 
       objectReference: {fileID: 595523538}
@@ -29912,9 +29928,29 @@ PrefabInstance:
       propertyPath: cameraTransform
       value: 
       objectReference: {fileID: 811304134}
+    - target: {fileID: 2037512471706856233, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: cameraController
+      value: 
+      objectReference: {fileID: 811304135}
+    - target: {fileID: 2037512471706856233, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: movementBreakMultiplier
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3794601445162910317, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5755406759223228440, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 5774598684288464199, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: cameraTransform
+      value: 
+      objectReference: {fileID: 811304134}
+    - target: {fileID: 8098805426423278476, guid: 4e762e6118a42bd41aad31f27ee24036, type: 3}
+      propertyPath: m_Mass
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
