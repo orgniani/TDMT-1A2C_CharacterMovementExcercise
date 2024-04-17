@@ -1,19 +1,20 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class CharacterBody : MonoBehaviour
 {
+    [Header("Parameters")]
     [SerializeField] private float maxFloorDistance = .01f;
-    private float brakeMultiplier = 1;
     [SerializeField] private float landBrakeMultiplier = 1;
-
     [SerializeField] private LayerMask floorMask;
     [SerializeField] private Vector3 floorCheckOffset = new Vector3(0, 0.001f, 0);
 
     private Rigidbody rigidBody;
     private MovementRequest currentMovement = MovementRequest.InvalidRequest;
     private bool isBrakeRequested = false;
+    private float brakeMultiplier = 1;
 
     private readonly List<ImpulseRequest> impulseRequests = new();
 
@@ -28,12 +29,20 @@ public class CharacterBody : MonoBehaviour
     private void Awake()
     {
         rigidBody = GetComponent<Rigidbody>();
+
+        if (floorMask != LayerMask.GetMask("Floor"))
+        {
+            Debug.LogError($"{name}: {nameof(floorMask)} is not set on floor layer!");
+        }
     }
 
     private void FixedUpdate()
     {
         if (isBrakeRequested)
+        {
             Break();
+            return;
+        }
 
         ManageMovement();
         ManageImpulseRequests();
@@ -58,6 +67,18 @@ public class CharacterBody : MonoBehaviour
     private void Break()
     {
         rigidBody.AddForce(-rigidBody.velocity * brakeMultiplier, ForceMode.Impulse);
+
+        if (brakeMultiplier == landBrakeMultiplier)
+            StartCoroutine(Wait());
+
+        else
+            isBrakeRequested = false;
+    }
+
+    private IEnumerator Wait()
+    {
+        yield return new WaitForSeconds(0.5f);
+
         isBrakeRequested = false;
     }
 

@@ -15,6 +15,49 @@ public class AnimatorView : MonoBehaviour
     [SerializeField] private string isFallingParameter = "is_falling";
     [SerializeField] private string horSpeedParameter = "hor_speed";
 
+    private void Awake()
+    {
+        if (!animator)
+        {
+            Debug.LogError($"{name}: {nameof(animator)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!rigidBody)
+        {
+            Debug.LogError($"{name}: {nameof(rigidBody)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!jump)
+        {
+            Debug.LogError($"{name}: {nameof(jump)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!ledgeGrab)
+        {
+            Debug.LogError($"{name}: {nameof(ledgeGrab)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!body)
+        {
+            Debug.LogError($"{name}: {nameof(body)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+    }
+
     private void OnEnable()
     {
         if (jump)
@@ -57,12 +100,6 @@ public class AnimatorView : MonoBehaviour
         if (!animator) return;
 
         animator.SetTrigger(jumpTriggerParameter);
-
-        //if (velocity == Vector3.zero)
-        //  animator.SetTrigger(jumpTriggerParameter);
-
-        //else
-        // animator.SetTrigger(runningJumpTriggerParameter);
     }
 
     private void HandleClimb()

@@ -2,23 +2,24 @@ using UnityEngine;
 
 public class CharacterBrain : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private CharacterBody body;
     [SerializeField] private InputReader inputReader;
     [SerializeField] private Jump jump;
     [SerializeField] private LedgeGrab grab;
     [SerializeField] private FollowPlayer cameraController;
+    [SerializeField] private Transform cameraTransform;
 
+    [Header("Parameters")]
     [SerializeField] private float speed = 10;
     [SerializeField] private float acceleration = 4;
     [SerializeField] private float movementBreakMultiplier = 0.5f;
 
-    [SerializeField] private Transform cameraTransform;
-
+    [Header("Logs")]
     [SerializeField] private bool enableLog = true;
 
     private Vector3 desiredDirection;
-
-    Vector2 input;
+    private Vector2 input;
 
     private void Awake()
     {
@@ -32,7 +33,41 @@ public class CharacterBrain : MonoBehaviour
 
         if (!inputReader)
         {
-            Debug.LogError($"{name}: {nameof(inputReader)} is null!");
+            Debug.LogError($"{name}: {nameof(inputReader)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!jump)
+        {
+            Debug.LogError($"{name}: {nameof(jump)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!grab)
+        {
+            Debug.LogError($"{name}: {nameof(grab)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!cameraController)
+        {
+            Debug.LogError($"{name}: {nameof(cameraController)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!cameraTransform)
+        {
+            Debug.LogError($"{name}: {nameof(cameraTransform)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
             return;
         }
     }
@@ -55,9 +90,9 @@ public class CharacterBrain : MonoBehaviour
 
     public Vector3 GetDesiredDirection() => desiredDirection;
 
-    private void FixedUpdate()
+    private void Update()
     {
-        if (grab.isHanging) return;
+        if (grab.IsHanging) return;
 
         if (desiredDirection.magnitude > Mathf.Epsilon
           && input.magnitude < Mathf.Epsilon)
@@ -104,6 +139,7 @@ public class CharacterBrain : MonoBehaviour
 
     private void HandleJumpInput()
     {
+        if (grab.IsHanging) return;
         jump.TryJump();
     }
 }

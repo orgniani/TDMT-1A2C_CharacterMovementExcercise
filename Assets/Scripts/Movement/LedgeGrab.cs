@@ -4,34 +4,84 @@ using UnityEngine;
 
 public class LedgeGrab : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private CharacterBody body;
     [SerializeField] private Rigidbody rigidBody;
-
-    [SerializeField] private Collider capsuleCollider;
-    [SerializeField] private Collider sphereCollider;
-
+    [SerializeField] private Collider bodyCollider;
+    [SerializeField] private Collider feetCollider;
     [SerializeField] private RotationBasedOnVelocity rotatePlayer;
 
-    [SerializeField] private LayerMask floorMask;
-
-    public bool isHanging = false;
-    private bool shouldClimb = true;
-
+    [Header("Parameters")]
     [SerializeField] private float climbForce = 3;
     [SerializeField] private float waitToClimb = 0.5f;
+    [SerializeField] private float waitToReEnableComponents = 0.3f;
+    [SerializeField] private LayerMask floorMask;
+
+    private bool shouldClimb = true;
 
     public event Action onClimb = delegate { };
+
+    public bool IsHanging { private set; get; }
+
+    private void Awake()
+    {
+        IsHanging = false;
+
+        if (!body)
+        {
+            Debug.LogError($"{name}: {nameof(body)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!rigidBody)
+        {
+            Debug.LogError($"{name}: {nameof(rigidBody)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!bodyCollider)
+        {
+            Debug.LogError($"{name}: {nameof(bodyCollider)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!feetCollider)
+        {
+            Debug.LogError($"{name}: {nameof(feetCollider)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!rotatePlayer)
+        {
+            Debug.LogError($"{name}: {nameof(rotatePlayer)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (floorMask != LayerMask.GetMask("Floor"))
+        {
+            Debug.LogError($"{name}: {nameof(floorMask)} is not set on floor layer!");
+        }
+    }
 
     private void FixedUpdate()
     {
         if (!body.IsFalling) return;
-        if (rigidBody.velocity.y < 0 && !isHanging)
+
+        if (rigidBody.velocity.y < 0 && !IsHanging)
         {
             if (!shouldClimb) return;
 
             RaycastHit downHit;
-
-            //Vector3 lineDownStart = (transform.position + Vector3.up * 1.5f) + transform.forward;
 
             Vector3 lineDownStart = (transform.position + Vector3.up * 1f) + transform.forward;
             Vector3 lineDownEnd = (transform.position + Vector3.up * 0.7f) + transform.forward;
@@ -53,7 +103,7 @@ public class LedgeGrab : MonoBehaviour
                     rigidBody.useGravity = false;
                     rigidBody.velocity = Vector3.zero;
 
-                    isHanging = true;
+                    IsHanging = true;
   
                     Vector3 hangingPosition = new Vector3(fwdHit.point.x, downHit.point.y, fwdHit.point.z);
                     Vector3 offset = transform.forward * -0.2f + transform.up * -0.8f;
@@ -73,19 +123,17 @@ public class LedgeGrab : MonoBehaviour
 
     private void StopMovingWhenHanging()
     {
-        //brain.enabled = false;
         rotatePlayer.enabled = false;
-        capsuleCollider.enabled = false;
-        sphereCollider.enabled = false;
+        bodyCollider.enabled = false;
+        feetCollider.enabled = false;
         body.SetMovement(new MovementRequest(Vector3.zero, 0f, 0f));
     }
 
     private void StartMovingWhenStopHanging()
     {
-        //brain.enabled = true;
         rotatePlayer.enabled = true;
-        capsuleCollider.enabled = true;
-        sphereCollider.enabled = true;
+        bodyCollider.enabled = true;
+        feetCollider.enabled = true;
     }
 
     private IEnumerator ClimbSequence()
@@ -97,23 +145,17 @@ public class LedgeGrab : MonoBehaviour
         yield return new WaitForSeconds(waitToClimb);
 
         rigidBody.useGravity = true;
-        //isHanging = false;
 
         body.RequestImpulse(new ImpulseRequest(Vector3.up, climbForce));
         body.RequestImpulse(new ImpulseRequest(transform.forward, climbForce/2));
 
-        //body.SetMovement(new MovementRequest(transform.forward, climbForce * 2, climbForce * 2));
-
-        rigidBody.useGravity = true;
-
-        //MAKE THIS A VARIABLE (the time lol)
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(waitToReEnableComponents);
 
         StartMovingWhenStopHanging();
 
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(waitToReEnableComponents);
 
-        isHanging = false;
+        IsHanging = false;
 
         shouldClimb = true;
     }

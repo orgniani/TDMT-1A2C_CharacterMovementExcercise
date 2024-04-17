@@ -11,6 +11,8 @@ public class FollowPlayer : MonoBehaviour
     [SerializeField] private float minVerticalAngle = -30f;
     [SerializeField] private float maxVerticalAngle = 60f;
 
+    [SerializeField] private float sensitivity = 1f;
+
     private float currentX = 0f;
     private float currentY = 0f;
 
@@ -42,14 +44,14 @@ public class FollowPlayer : MonoBehaviour
         Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
         Vector3 position = rotation * negDistance + target.position + offset;
 
-        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, speed * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
         transform.position = Vector3.Lerp(transform.position, position, speed * Time.deltaTime);
     }
 
     public void SetInputRotation(Vector2 input)
     {
-        currentX += input.x * speed * Time.deltaTime;
-        currentY -= input.y * rotationSpeed * Time.deltaTime;
+        currentX += input.x * sensitivity * Time.deltaTime;
+        currentY -= input.y * sensitivity * Time.deltaTime;
         currentY = Mathf.Clamp(currentY, minVerticalAngle, maxVerticalAngle);
     }
 }
