@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.HID;
 
 [RequireComponent(typeof(Rigidbody))]
 public class CharacterBody : MonoBehaviour
@@ -9,7 +10,8 @@ public class CharacterBody : MonoBehaviour
     [SerializeField] private float maxFloorDistance = .01f;
     [SerializeField] private float landBrakeMultiplier = 1;
     [SerializeField] private LayerMask floorMask;
-    [SerializeField] private Vector3 floorCheckOffset = new Vector3(0, 0.001f, 0);
+    [SerializeField] private Vector3 floorLineCheckOffset = new Vector3 (0, 0.001f, 0);
+    [SerializeField] private float floorSphereCheckOffset = 0.001f;
 
     private Rigidbody rigidBody;
     private MovementRequest currentMovement = MovementRequest.InvalidRequest;
@@ -19,6 +21,7 @@ public class CharacterBody : MonoBehaviour
     private readonly List<ImpulseRequest> impulseRequests = new();
 
     private bool isOnAir = false;
+
     public bool IsFalling { private set; get; }
 
     private void Reset()
@@ -41,7 +44,6 @@ public class CharacterBody : MonoBehaviour
         if (isBrakeRequested)
         {
             Break();
-            return;
         }
 
         ManageMovement();
@@ -89,7 +91,12 @@ public class CharacterBody : MonoBehaviour
 
         RaycastHit hit;
 
-        IsFalling = !Physics.Raycast(transform.position + floorCheckOffset, -transform.up, out hit, maxFloorDistance, floorMask);
+        Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - floorSphereCheckOffset, transform.position.z);
+
+        bool onFloorLineCheck = Physics.Raycast(transform.position + floorLineCheckOffset, -transform.up, out hit, maxFloorDistance, floorMask);
+        bool onFloorSphereCheck = Physics.CheckSphere(spherePosition, 0.2f, floorMask, QueryTriggerInteraction.Ignore);
+
+        IsFalling = !onFloorLineCheck && !onFloorSphereCheck;
 
         if (!currentMovement.IsValid() || velocity.magnitude >= currentMovement.GoalSpeed)
             return;
@@ -132,7 +139,11 @@ public class CharacterBody : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawRay(transform.position + floorCheckOffset, -transform.up * maxFloorDistance);
+
+        Gizmos.DrawRay(transform.position + floorLineCheckOffset, -transform.up * maxFloorDistance);
+
+        Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - floorSphereCheckOffset, transform.position.z);
+        Gizmos.DrawWireSphere(spherePosition, 0.2f);
     }
 
 }

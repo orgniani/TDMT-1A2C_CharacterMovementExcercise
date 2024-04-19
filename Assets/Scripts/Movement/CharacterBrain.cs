@@ -21,6 +21,12 @@ public class CharacterBrain : MonoBehaviour
     private Vector3 desiredDirection;
     private Vector2 input;
 
+    public float Acceleration
+    {
+        get { return acceleration; }
+        set { acceleration = value; }
+    }
+
     private void Awake()
     {
         if (!body)

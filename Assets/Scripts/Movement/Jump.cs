@@ -5,8 +5,8 @@ public class Jump : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private CharacterBody body;
+    [SerializeField] private CharacterBrain brain;
     [SerializeField] private Rigidbody rigidBody;
-    //[SerializeField] private JumpModel model;
 
     [Header("Parameters")]
     [SerializeField] private float waitToJump = 0.5f;
@@ -52,7 +52,7 @@ public class Jump : MonoBehaviour
 
         if (!shouldJumpOnRamp) return false;
 
-        if(body.IsFalling) return false;
+        if (body.IsFalling) return false;
 
         StartCoroutine(JumpSequence());
 
@@ -63,6 +63,7 @@ public class Jump : MonoBehaviour
     {
         shouldJump = false;
 
+        brain.Acceleration = 10f;
         body.RequestBrake(jumpBrakeMultiplier);
 
         onJump.Invoke();
@@ -78,6 +79,8 @@ public class Jump : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        brain.Acceleration = 15f;
+
         var contact = collision.contacts[0];
         var contactAngle = Vector3.Angle(contact.normal, Vector3.up);
 

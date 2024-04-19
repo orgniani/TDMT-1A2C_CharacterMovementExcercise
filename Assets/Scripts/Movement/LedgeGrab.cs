@@ -12,6 +12,10 @@ public class LedgeGrab : MonoBehaviour
     [SerializeField] private RotationBasedOnVelocity rotatePlayer;
 
     [Header("Parameters")]
+
+    [SerializeField] private float lineStartOffset = 1f;
+    [SerializeField] private float lineEndOffset = 0.7f;
+
     [SerializeField] private float climbForce = 3;
     [SerializeField] private float waitToClimb = 0.5f;
     [SerializeField] private float waitToReEnableComponents = 0.3f;
@@ -81,43 +85,48 @@ public class LedgeGrab : MonoBehaviour
         {
             if (!shouldClimb) return;
 
-            RaycastHit downHit;
+            DetectEdge();
+        }
+    }
 
-            Vector3 lineDownStart = (transform.position + Vector3.up * 1f) + transform.forward;
-            Vector3 lineDownEnd = (transform.position + Vector3.up * 0.7f) + transform.forward;
+    private void DetectEdge()
+    {
+        RaycastHit downHit;
 
-            Physics.Linecast(lineDownStart, lineDownEnd, out downHit, floorMask);
-            Debug.DrawLine(lineDownStart, lineDownEnd);
+        Vector3 lineDownStart = (transform.position + Vector3.up * lineStartOffset) + transform.forward;
+        Vector3 lineDownEnd = (transform.position + Vector3.up * lineEndOffset) + transform.forward;
 
-            if (downHit.collider != null)
+        Physics.Linecast(lineDownStart, lineDownEnd, out downHit, floorMask);
+        Debug.DrawLine(lineDownStart, lineDownEnd);
+
+        if (downHit.collider != null)
+        {
+            RaycastHit fwdHit;
+            Vector3 lineFwdStart = new Vector3(transform.position.x, downHit.point.y - 0.1f, transform.position.z);
+            Vector3 lineFwdEnd = new Vector3(transform.position.x, downHit.point.y - 0.1f, transform.position.z) + transform.forward;
+
+            Physics.Linecast(lineFwdStart, lineFwdEnd, out fwdHit, floorMask);
+            Debug.DrawLine(lineFwdStart, lineFwdEnd);
+
+            if (fwdHit.collider != null)
             {
-                RaycastHit fwdHit;
-                Vector3 lineFwdStart = new Vector3(transform.position.x, downHit.point.y - 0.1f, transform.position.z);
-                Vector3 lineFwdEnd = new Vector3(transform.position.x, downHit.point.y - 0.1f, transform.position.z) + transform.forward;
+                rigidBody.useGravity = false;
+                rigidBody.velocity = Vector3.zero;
 
-                Physics.Linecast(lineFwdStart, lineFwdEnd, out fwdHit, floorMask);
-                Debug.DrawLine(lineFwdStart, lineFwdEnd);
+                IsHanging = true;
 
-                if (fwdHit.collider != null)
-                {
-                    rigidBody.useGravity = false;
-                    rigidBody.velocity = Vector3.zero;
+                Vector3 hangingPosition = new Vector3(fwdHit.point.x, downHit.point.y, fwdHit.point.z);
+                Vector3 offset = transform.forward * -0.2f + transform.up * -0.8f;
+                hangingPosition += offset;
 
-                    IsHanging = true;
-  
-                    Vector3 hangingPosition = new Vector3(fwdHit.point.x, downHit.point.y, fwdHit.point.z);
-                    Vector3 offset = transform.forward * -0.2f + transform.up * -0.8f;
-                    hangingPosition += offset;
+                transform.position = hangingPosition;
+                transform.forward = -fwdHit.normal;
 
-                    transform.position = hangingPosition;
-                    transform.forward = -fwdHit.normal;
+                StopMovingWhenHanging();
 
-                    StopMovingWhenHanging();
-
-                    StartCoroutine(ClimbSequence());
-                }
-
+                StartCoroutine(ClimbSequence());
             }
+
         }
     }
 
@@ -126,7 +135,6 @@ public class LedgeGrab : MonoBehaviour
         rotatePlayer.enabled = false;
         bodyCollider.enabled = false;
         feetCollider.enabled = false;
-        body.SetMovement(new MovementRequest(Vector3.zero, 0f, 0f));
     }
 
     private void StartMovingWhenStopHanging()
@@ -138,8 +146,9 @@ public class LedgeGrab : MonoBehaviour
 
     private IEnumerator ClimbSequence()
     {
-        shouldClimb = false;
+        body.SetMovement(new MovementRequest(Vector3.zero, 0f, 0f));
 
+        shouldClimb = false;
         onClimb.Invoke();
 
         yield return new WaitForSeconds(waitToClimb);
