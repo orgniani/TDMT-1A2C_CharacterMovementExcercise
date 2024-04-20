@@ -6,14 +6,6 @@ public class Jump : MonoBehaviour
     [Header("References")]
     [SerializeField] private CharacterBody body;
     [SerializeField] private CharacterBrain brain;
-    [SerializeField] private Rigidbody rigidBody;
-
-    [Header("Parameters")]
-    [SerializeField] private float waitToJump = 0.5f;
-    [SerializeField] private float jumpForce = 10;
-    [SerializeField] private int floorAngle = 30;
-    [SerializeField] private float jumpBrakeMultiplier = 1f;
-    [SerializeField] private float jumpCooldown = 1f;
 
     [Header("Logs")]
     [SerializeField] private bool enableLog = true;
@@ -22,6 +14,8 @@ public class Jump : MonoBehaviour
     private bool shouldJumpOnRamp = true;
 
     public event Action onJump = delegate { };
+
+    public JumpModel Model { get; set; }
 
     private void Reset()
     {
@@ -33,13 +27,6 @@ public class Jump : MonoBehaviour
         if (!body)
         {
             Debug.LogError($"{name}: {nameof(body)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-        if (!rigidBody)
-        {
-            Debug.LogError($"{name}: {nameof(rigidBody)} is null!" +
                            $"\nDisabling object to avoid errors.");
             enabled = false;
             return;
@@ -63,23 +50,24 @@ public class Jump : MonoBehaviour
     {
         shouldJump = false;
 
-        brain.Acceleration = 10f;
-        body.RequestBrake(jumpBrakeMultiplier);
+        brain.Acceleration = Model.Acceleration;
+
+        body.RequestBrake(Model.BrakeMultiplier);
 
         onJump.Invoke();
 
-        yield return new WaitForSeconds(waitToJump);
+        yield return new WaitForSeconds(Model.WaitToJump);
 
-        body.RequestImpulse(new ImpulseRequest(Vector3.up, jumpForce));
+        body.RequestImpulse(new ImpulseRequest(Vector3.up, Model.Force));
 
-        yield return new WaitForSeconds(jumpCooldown);
+        yield return new WaitForSeconds(Model.Cooldown);
 
         shouldJump = true;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        brain.Acceleration = 15f;
+        brain.Acceleration = 15f; //CHANGE THIS TO VARIABLE!!!
 
         var contact = collision.contacts[0];
         var contactAngle = Vector3.Angle(contact.normal, Vector3.up);
@@ -87,7 +75,7 @@ public class Jump : MonoBehaviour
         if (contactAngle >= 90)
             contactAngle = 0;
 
-        if (contactAngle <= floorAngle)
+        if (contactAngle <= Model.FloorAngle)
         {
             shouldJumpOnRamp = true;
         }

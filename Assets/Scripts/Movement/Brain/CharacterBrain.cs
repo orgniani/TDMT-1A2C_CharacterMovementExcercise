@@ -10,21 +10,18 @@ public class CharacterBrain : MonoBehaviour
     [SerializeField] private FollowPlayer cameraController;
     [SerializeField] private Transform cameraTransform;
 
-    [Header("Parameters")]
-    [SerializeField] private float speed = 10;
-    [SerializeField] private float acceleration = 4;
-    [SerializeField] private float movementBreakMultiplier = 0.5f;
-
     [Header("Logs")]
     [SerializeField] private bool enableLog = true;
 
     private Vector3 desiredDirection;
     private Vector2 input;
 
+    public BrainModel Model { get; set; }
+
     public float Acceleration
     {
-        get { return acceleration; }
-        set { acceleration = value; }
+        get { return Model.Acceleration; }
+        set { Model.Acceleration = value; }
     }
 
     private void Awake()
@@ -108,14 +105,14 @@ public class CharacterBrain : MonoBehaviour
                 Debug.Log($"{nameof(desiredDirection)} magnitude: {desiredDirection.magnitude}\t{nameof(input)} magnitude: {input.magnitude}");
             }
 
-            body.RequestBrake(movementBreakMultiplier);
+            body.RequestBrake(Model.MovementBreakMultiplier);
         }
 
         Vector3 movementInput = input;
 
         desiredDirection = TransformDirectionRelativeToCamera(movementInput);
 
-        body.SetMovement(new MovementRequest(desiredDirection, speed, acceleration));
+        body.SetMovement(new MovementRequest(desiredDirection, Model.Speed, Acceleration));
     }
 
     private void HandleMovementInput(Vector2 input)

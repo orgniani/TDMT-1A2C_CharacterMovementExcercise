@@ -6,13 +6,6 @@ using UnityEngine.InputSystem.HID;
 [RequireComponent(typeof(Rigidbody))]
 public class CharacterBody : MonoBehaviour
 {
-    [Header("Parameters")]
-    [SerializeField] private float maxFloorDistance = .01f;
-    [SerializeField] private float landBrakeMultiplier = 1;
-    [SerializeField] private LayerMask floorMask;
-    [SerializeField] private Vector3 floorLineCheckOffset = new Vector3 (0, 0.001f, 0);
-    [SerializeField] private float floorSphereCheckOffset = 0.001f;
-
     private Rigidbody rigidBody;
     private MovementRequest currentMovement = MovementRequest.InvalidRequest;
     private bool isBrakeRequested = false;
@@ -24,6 +17,8 @@ public class CharacterBody : MonoBehaviour
 
     public bool IsFalling { private set; get; }
 
+    public BodyModel Model { get; set; }
+
     private void Reset()
     {
         rigidBody = GetComponent<Rigidbody>();
@@ -32,11 +27,6 @@ public class CharacterBody : MonoBehaviour
     private void Awake()
     {
         rigidBody = GetComponent<Rigidbody>();
-
-        if (floorMask != LayerMask.GetMask("Floor"))
-        {
-            Debug.LogError($"{name}: {nameof(floorMask)} is not set on floor layer!");
-        }
     }
 
     private void FixedUpdate()
@@ -70,7 +60,7 @@ public class CharacterBody : MonoBehaviour
     {
         rigidBody.AddForce(-rigidBody.velocity * brakeMultiplier, ForceMode.Impulse);
 
-        if (brakeMultiplier == landBrakeMultiplier)
+        if (brakeMultiplier == Model.LandBrakeMultiplier)
             StartCoroutine(Wait());
 
         else
@@ -79,7 +69,7 @@ public class CharacterBody : MonoBehaviour
 
     private IEnumerator Wait()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.3f);
 
         isBrakeRequested = false;
     }
@@ -91,10 +81,10 @@ public class CharacterBody : MonoBehaviour
 
         RaycastHit hit;
 
-        Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - floorSphereCheckOffset, transform.position.z);
+        Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - Model.FloorSphereCheckOffset, transform.position.z);
 
-        bool onFloorLineCheck = Physics.Raycast(transform.position + floorLineCheckOffset, -transform.up, out hit, maxFloorDistance, floorMask);
-        bool onFloorSphereCheck = Physics.CheckSphere(spherePosition, 0.2f, floorMask, QueryTriggerInteraction.Ignore);
+        bool onFloorLineCheck = Physics.Raycast(transform.position + Model.FloorLineCheckOffset, -transform.up, out hit, Model.MaxFloorDistance, Model.FloorMask);
+        bool onFloorSphereCheck = Physics.CheckSphere(spherePosition, 0.3f, Model.FloorMask, QueryTriggerInteraction.Ignore);
 
         IsFalling = !onFloorLineCheck && !onFloorSphereCheck;
 
@@ -127,11 +117,11 @@ public class CharacterBody : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (floorMask == (floorMask | (1 << collision.gameObject.layer)))
+        if (Model.FloorMask == (Model.FloorMask | (1 << collision.gameObject.layer)))
         {
             if (!isOnAir) return;
 
-            RequestBrake(landBrakeMultiplier);
+            RequestBrake(Model.LandBrakeMultiplier);
             isOnAir = false;
         }
     }
@@ -140,9 +130,9 @@ public class CharacterBody : MonoBehaviour
     {
         Gizmos.color = Color.green;
 
-        Gizmos.DrawRay(transform.position + floorLineCheckOffset, -transform.up * maxFloorDistance);
+        Gizmos.DrawRay(transform.position + Model.FloorLineCheckOffset, -transform.up * Model.MaxFloorDistance);
 
-        Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - floorSphereCheckOffset, transform.position.z);
+        Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - Model.FloorSphereCheckOffset, transform.position.z);
         Gizmos.DrawWireSphere(spherePosition, 0.2f);
     }
 

@@ -6,26 +6,24 @@ public class LedgeGrab : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private CharacterBody body;
-    [SerializeField] private Rigidbody rigidBody;
     [SerializeField] private Collider bodyCollider;
     [SerializeField] private Collider feetCollider;
     [SerializeField] private RotationBasedOnVelocity rotatePlayer;
 
-    [Header("Parameters")]
-
-    [SerializeField] private float lineStartOffset = 1f;
-    [SerializeField] private float lineEndOffset = 0.7f;
-
-    [SerializeField] private float climbForce = 3;
-    [SerializeField] private float waitToClimb = 0.5f;
-    [SerializeField] private float waitToReEnableComponents = 0.3f;
-    [SerializeField] private LayerMask floorMask;
+    private Rigidbody rigidBody;
 
     private bool shouldClimb = true;
 
     public event Action onClimb = delegate { };
 
     public bool IsHanging { private set; get; }
+
+    public LedgeGrabModel Model { get; set; }
+
+    private void Reset()
+    {
+        rigidBody = GetComponent<Rigidbody>();
+    }
 
     private void Awake()
     {
@@ -34,14 +32,6 @@ public class LedgeGrab : MonoBehaviour
         if (!body)
         {
             Debug.LogError($"{name}: {nameof(body)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!rigidBody)
-        {
-            Debug.LogError($"{name}: {nameof(rigidBody)} is null!" +
                            $"\nDisabling object to avoid errors.");
             enabled = false;
             return;
@@ -71,10 +61,7 @@ public class LedgeGrab : MonoBehaviour
             return;
         }
 
-        if (floorMask != LayerMask.GetMask("Floor"))
-        {
-            Debug.LogError($"{name}: {nameof(floorMask)} is not set on floor layer!");
-        }
+        rigidBody = GetComponent<Rigidbody>();
     }
 
     private void FixedUpdate()
@@ -93,10 +80,10 @@ public class LedgeGrab : MonoBehaviour
     {
         RaycastHit downHit;
 
-        Vector3 lineDownStart = (transform.position + Vector3.up * lineStartOffset) + transform.forward;
-        Vector3 lineDownEnd = (transform.position + Vector3.up * lineEndOffset) + transform.forward;
+        Vector3 lineDownStart = (transform.position + Vector3.up * Model.LineStartOffset) + transform.forward;
+        Vector3 lineDownEnd = (transform.position + Vector3.up * Model.LineEndOffset) + transform.forward;
 
-        Physics.Linecast(lineDownStart, lineDownEnd, out downHit, floorMask);
+        Physics.Linecast(lineDownStart, lineDownEnd, out downHit, Model.FloorMask);
         Debug.DrawLine(lineDownStart, lineDownEnd);
 
         if (downHit.collider != null)
@@ -105,7 +92,7 @@ public class LedgeGrab : MonoBehaviour
             Vector3 lineFwdStart = new Vector3(transform.position.x, downHit.point.y - 0.1f, transform.position.z);
             Vector3 lineFwdEnd = new Vector3(transform.position.x, downHit.point.y - 0.1f, transform.position.z) + transform.forward;
 
-            Physics.Linecast(lineFwdStart, lineFwdEnd, out fwdHit, floorMask);
+            Physics.Linecast(lineFwdStart, lineFwdEnd, out fwdHit, Model.FloorMask);
             Debug.DrawLine(lineFwdStart, lineFwdEnd);
 
             if (fwdHit.collider != null)
@@ -151,18 +138,18 @@ public class LedgeGrab : MonoBehaviour
         shouldClimb = false;
         onClimb.Invoke();
 
-        yield return new WaitForSeconds(waitToClimb);
+        yield return new WaitForSeconds(Model.WaitToClimb);
 
         rigidBody.useGravity = true;
 
-        body.RequestImpulse(new ImpulseRequest(Vector3.up, climbForce));
-        body.RequestImpulse(new ImpulseRequest(transform.forward, climbForce/2));
+        body.RequestImpulse(new ImpulseRequest(Vector3.up, Model.ClimbForce));
+        body.RequestImpulse(new ImpulseRequest(transform.forward, Model.ClimbForce / 2));
 
-        yield return new WaitForSeconds(waitToReEnableComponents);
+        yield return new WaitForSeconds(Model.WaitToReEnableComponents);
 
         StartMovingWhenStopHanging();
 
-        yield return new WaitForSeconds(waitToReEnableComponents);
+        yield return new WaitForSeconds(Model.WaitToReEnableComponents);
 
         IsHanging = false;
 
