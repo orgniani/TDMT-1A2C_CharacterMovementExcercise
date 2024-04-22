@@ -15,9 +15,8 @@ MonoBehaviour:
   <Model>k__BackingField:
     <LineStartOffset>k__BackingField: 1
     <LineEndOffset>k__BackingField: 0.7
+    <HangPositionForwardOffset>k__BackingField: -0.2
+    <HangPositionUpOffset>k__BackingField: -0.8
     <ClimbForce>k__BackingField: 4
     <WaitToClimb>k__BackingField: 0.5
     <WaitToReEnableComponents>k__BackingField: 0.3
-    <FloorMask>k__BackingField:
-      serializedVersion: 2
-      m_Bits: 0

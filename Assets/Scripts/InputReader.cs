@@ -10,16 +10,17 @@ public class InputReader : MonoBehaviour
 
     public void HandleMovementInput(InputAction.CallbackContext ctx)
     {
-        onMovementInput.Invoke(ctx.ReadValue<Vector2>());
+        onMovementInput?.Invoke(ctx.ReadValue<Vector2>());
     }
+
     public void HandleJumpInput(InputAction.CallbackContext ctx)
     {
         if (ctx.performed)
-            onJumpInput.Invoke();
+            onJumpInput?.Invoke();
     }
 
     public void HandleCameraInput(InputAction.CallbackContext ctx)
     {
-        OnCameraInput.Invoke(ctx.ReadValue<Vector2>());
+        OnCameraInput?.Invoke(ctx.ReadValue<Vector2>());
     }
 }

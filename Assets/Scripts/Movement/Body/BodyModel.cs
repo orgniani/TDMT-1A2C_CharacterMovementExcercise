@@ -8,9 +8,9 @@ public class BodyModel
 
     [field: SerializeField] public float LandBrakeMultiplier { get; private set; } = 1f;
 
-    [field: SerializeField] public LayerMask FloorMask { get; private set; }
-
-    [field: SerializeField] public Vector3 FloorLineCheckOffset { get; private set; } = new Vector3(0, 0.1f, 0);
+    [field: SerializeField] public float FloorLineCheckOffset { get; private set; } = 0.1f;
 
     [field: SerializeField] public float FloorSphereCheckOffset { get; private set; } = 0.1f;
+
+    [field: SerializeField] public float FloorSphereCheckRadius { get; private set; } = 0.3f;
 }

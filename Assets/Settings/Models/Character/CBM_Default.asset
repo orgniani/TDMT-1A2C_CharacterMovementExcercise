@@ -13,10 +13,8 @@ MonoBehaviour:
   m_Name: CBM_Default
   m_EditorClassIdentifier: 
   <Model>k__BackingField:
-    <MaxFloorDistance>k__BackingField: 0.5
+    <MaxFloorDistance>k__BackingField: 0.7
     <LandBrakeMultiplier>k__BackingField: 1
-    <FloorMask>k__BackingField:
-      serializedVersion: 2
-      m_Bits: 8
-    <FloorLineCheckOffset>k__BackingField: {x: 0, y: 0.1, z: 0}
-    <FloorSphereCheckOffset>k__BackingField: 0.1
+    <FloorLineCheckOffset>k__BackingField: 0.1
+    <FloorSphereCheckOffset>k__BackingField: -0.2
+    <FloorSphereCheckRadius>k__BackingField: 0.3

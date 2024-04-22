@@ -16,12 +16,13 @@ public class CharacterBrain : MonoBehaviour
     private Vector3 desiredDirection;
     private Vector2 input;
 
+    private float acceleration;
+
     public BrainModel Model { get; set; }
 
     public float Acceleration
     {
-        get { return Model.Acceleration; }
-        set { Model.Acceleration = value; }
+        set { acceleration = value; }
     }
 
     private void Awake()
@@ -112,7 +113,7 @@ public class CharacterBrain : MonoBehaviour
 
         desiredDirection = TransformDirectionRelativeToCamera(movementInput);
 
-        body.SetMovement(new MovementRequest(desiredDirection, Model.Speed, Acceleration));
+        body.SetMovement(new MovementRequest(desiredDirection, Model.Speed, acceleration));
     }
 
     private void HandleMovementInput(Vector2 input)
@@ -143,6 +144,6 @@ public class CharacterBrain : MonoBehaviour
     private void HandleJumpInput()
     {
         if (grab.IsHanging) return;
-        jump.TryJump();
+        jump.TryJump(Model.Acceleration);
     }
 }

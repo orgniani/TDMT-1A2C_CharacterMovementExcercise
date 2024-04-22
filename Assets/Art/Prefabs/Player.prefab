@@ -95,6 +95,7 @@ GameObject:
   - component: {fileID: 8098805426423278476}
   - component: {fileID: 8372638052066189602}
   - component: {fileID: 7748104458052449859}
+  - component: {fileID: 1908781255751435378}
   - component: {fileID: 7507693741780633723}
   - component: {fileID: 2037512471706856233}
   - component: {fileID: 5774598684288464199}
@@ -170,8 +171,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.3
-  m_Height: 1.5
+  m_Radius: 0.4
+  m_Height: 1.39
   m_Direction: 1
   m_Center: {x: 0, y: 1.03, z: 0}
 --- !u!135 &7748104458052449859
@@ -193,8 +194,30 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.19
-  m_Center: {x: 0, y: 0.19, z: 0}
+  m_Radius: 0.3
+  m_Center: {x: 0, y: 0.3, z: 0}
+--- !u!114 &1908781255751435378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5755406759223228440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4855658634f67374a810f1f78adcaf07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bodyModelContainer: {fileID: 11400000, guid: caa6a6f97e2bdd3438cca47f966291ef, type: 2}
+  characterBody: {fileID: 7507693741780633723}
+  brainModelContainer: {fileID: 11400000, guid: 1021b0690a8141244855c3b3e412c6fb, type: 2}
+  characterBrain: {fileID: 2037512471706856233}
+  jumpModelContainer: {fileID: 11400000, guid: 8d9c4214d283b49468fddb947bac62c0, type: 2}
+  jump: {fileID: 2885302641010859004}
+  rotationModelContainer: {fileID: 11400000, guid: aa10caae194ce2a4f9c6b4ccf103659a, type: 2}
+  rotation: {fileID: 5774598684288464199}
+  ledgeGrabModelContainer: {fileID: 11400000, guid: fde8330b4cf23894eb9d96d03c2756fc, type: 2}
+  ledgeGrab: {fileID: 2661739974639584771}
 --- !u!114 &7507693741780633723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,12 +230,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3e0e800708e48c40a7cdf084598ca79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxFloorDistance: 0.7
-  landBrakeMultiplier: 1
   floorMask:
     serializedVersion: 2
     m_Bits: 8
-  floorCheckOffset: {x: 0, y: 0.1, z: 0}
 --- !u!114 &2037512471706856233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -228,9 +248,8 @@ MonoBehaviour:
   body: {fileID: 7507693741780633723}
   inputReader: {fileID: 0}
   jump: {fileID: 2885302641010859004}
-  speed: 12
-  acceleration: 15
-  movementBreakMultiplier: 0.5
+  grab: {fileID: 2661739974639584771}
+  cameraController: {fileID: 0}
   cameraTransform: {fileID: 0}
   enableLog: 0
 --- !u!114 &5774598684288464199
@@ -245,9 +264,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52d48d034e9c83f4d9af376025d9b61e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rigidBody: {fileID: 8098805426423278476}
-  rotationSpeed: 2
-  minimumSpeedForRotation: 0.001
 --- !u!114 &2885302641010859004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -261,18 +277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   body: {fileID: 7507693741780633723}
-  rigidBody: {fileID: 8098805426423278476}
-  waitToJump: 0.5
-  jumpForce: 5
-  floorAngle: 45
-  jumpBrakeMultiplier: 1
-  waitToFall: 0.3
-  fallSpeed: 3
-  fallAcceleration: 1
-  floorMask:
-    serializedVersion: 2
-    m_Bits: 8
-  jumpCooldown: 1
+  brain: {fileID: 2037512471706856233}
   enableLog: 0
 --- !u!114 &2661739974639584771
 MonoBehaviour:
@@ -287,16 +292,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   body: {fileID: 7507693741780633723}
-  rigidBody: {fileID: 8098805426423278476}
-  capsuleCollider: {fileID: 8372638052066189602}
-  sphereCollider: {fileID: 7748104458052449859}
-  brain: {fileID: 2037512471706856233}
+  bodyCollider: {fileID: 8372638052066189602}
+  feetCollider: {fileID: 7748104458052449859}
   rotatePlayer: {fileID: 5774598684288464199}
   floorMask:
     serializedVersion: 2
     m_Bits: 8
-  climbForce: 4
-  waitToClimb: 0.5
 --- !u!1 &9202537981888433079
 GameObject:
   m_ObjectHideFlags: 0

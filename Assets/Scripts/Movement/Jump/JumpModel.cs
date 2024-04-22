@@ -6,11 +6,11 @@ public class JumpModel
 {
     [field: SerializeField] public float Force { get; private set; } = 5.2f;
 
-    [field: SerializeField] public float FloorAngle { get; private set; } = 45;
+    [field: SerializeField] public float FloorAngle { get; private set; } = 30;
+
+    [field: SerializeField] public float JumpAcceleration { get; private set; } = 10f;
 
     [field: SerializeField] public float BrakeMultiplier { get; private set; } = 0.8f;
-
-    [field: SerializeField] public float Acceleration { get; private set; } = 8f;
 
     [field: SerializeField] public float Cooldown { get; private set; } = 1f;
 

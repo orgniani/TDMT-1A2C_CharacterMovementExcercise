@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CharacterSetup : MonoBehaviour
@@ -24,7 +22,6 @@ public class CharacterSetup : MonoBehaviour
     [SerializeField] private LedgeGrabModelContainer ledgeGrabModelContainer;
     [SerializeField] private LedgeGrab ledgeGrab;
 
-
     private void OnEnable()
     {
         if (jump && jumpModelContainer)
@@ -43,6 +40,7 @@ public class CharacterSetup : MonoBehaviour
         {
             characterBrain.Model = brainModelContainer.Model;
             characterBrain.enabled = true;
+            characterBrain.Acceleration = brainModelContainer.Model.Acceleration;
         }
 
         if (rotation && rotationModelContainer)

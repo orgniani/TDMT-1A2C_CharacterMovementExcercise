@@ -10,9 +10,13 @@ public class LedgeGrab : MonoBehaviour
     [SerializeField] private Collider feetCollider;
     [SerializeField] private RotationBasedOnVelocity rotatePlayer;
 
+    [Header("Floor Mask")]
+    [SerializeField] private LayerMask floorMask;
+
     private Rigidbody rigidBody;
 
     private bool shouldClimb = true;
+    private bool isStraightWall;
 
     public event Action onClimb = delegate { };
 
@@ -83,7 +87,7 @@ public class LedgeGrab : MonoBehaviour
         Vector3 lineDownStart = (transform.position + Vector3.up * Model.LineStartOffset) + transform.forward;
         Vector3 lineDownEnd = (transform.position + Vector3.up * Model.LineEndOffset) + transform.forward;
 
-        Physics.Linecast(lineDownStart, lineDownEnd, out downHit, Model.FloorMask);
+        Physics.Linecast(lineDownStart, lineDownEnd, out downHit, floorMask);
         Debug.DrawLine(lineDownStart, lineDownEnd);
 
         if (downHit.collider != null)
@@ -92,7 +96,7 @@ public class LedgeGrab : MonoBehaviour
             Vector3 lineFwdStart = new Vector3(transform.position.x, downHit.point.y - 0.1f, transform.position.z);
             Vector3 lineFwdEnd = new Vector3(transform.position.x, downHit.point.y - 0.1f, transform.position.z) + transform.forward;
 
-            Physics.Linecast(lineFwdStart, lineFwdEnd, out fwdHit, Model.FloorMask);
+            Physics.Linecast(lineFwdStart, lineFwdEnd, out fwdHit, floorMask);
             Debug.DrawLine(lineFwdStart, lineFwdEnd);
 
             if (fwdHit.collider != null)
@@ -103,7 +107,7 @@ public class LedgeGrab : MonoBehaviour
                 IsHanging = true;
 
                 Vector3 hangingPosition = new Vector3(fwdHit.point.x, downHit.point.y, fwdHit.point.z);
-                Vector3 offset = transform.forward * -0.2f + transform.up * -0.8f;
+                Vector3 offset = transform.forward * Model.HangPositionForwardOffset + transform.up * Model.HangPositionUpOffset;
                 hangingPosition += offset;
 
                 transform.position = hangingPosition;
@@ -136,7 +140,7 @@ public class LedgeGrab : MonoBehaviour
         body.SetMovement(new MovementRequest(Vector3.zero, 0f, 0f));
 
         shouldClimb = false;
-        onClimb.Invoke();
+        onClimb?.Invoke();
 
         yield return new WaitForSeconds(Model.WaitToClimb);
 
@@ -155,5 +159,4 @@ public class LedgeGrab : MonoBehaviour
 
         shouldClimb = true;
     }
-
 }

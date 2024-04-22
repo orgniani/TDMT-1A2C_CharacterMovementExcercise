@@ -31,9 +31,17 @@ public class Jump : MonoBehaviour
             enabled = false;
             return;
         }
+
+        if (!brain)
+        {
+            Debug.LogError($"{name}: {nameof(brain)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
     }
 
-    public bool TryJump()
+    public bool TryJump(float normalAcceleration)
     {
         if (!shouldJump) return false;
 
@@ -41,20 +49,19 @@ public class Jump : MonoBehaviour
 
         if (body.IsFalling) return false;
 
-        StartCoroutine(JumpSequence());
+        StartCoroutine(JumpSequence(normalAcceleration));
 
         return true;
     }
 
-    private IEnumerator JumpSequence()
+    private IEnumerator JumpSequence(float normalAcceleration)
     {
         shouldJump = false;
 
-        brain.Acceleration = Model.Acceleration;
-
         body.RequestBrake(Model.BrakeMultiplier);
+        brain.Acceleration = Model.JumpAcceleration;
 
-        onJump.Invoke();
+        onJump?.Invoke();
 
         yield return new WaitForSeconds(Model.WaitToJump);
 
@@ -62,13 +69,13 @@ public class Jump : MonoBehaviour
 
         yield return new WaitForSeconds(Model.Cooldown);
 
+        brain.Acceleration = normalAcceleration;
+
         shouldJump = true;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        brain.Acceleration = 15f; //CHANGE THIS TO VARIABLE!!!
-
         var contact = collision.contacts[0];
         var contactAngle = Vector3.Angle(contact.normal, Vector3.up);
 
