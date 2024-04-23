@@ -13,7 +13,8 @@ public class FollowPlayer : MonoBehaviour
     {
         if (!target)
         {
-            Debug.LogError($"{name}: Target is null!");
+            Debug.LogError($"{name}: {nameof(target)} is null!" +
+                           $"\nDisabling object to avoid errors.");
             enabled = false;
             return;
         }
@@ -27,9 +28,6 @@ public class FollowPlayer : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!target)
-            return;
-
         Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
 
         Vector3 offset = Vector3.up * Model.OffsetUp;

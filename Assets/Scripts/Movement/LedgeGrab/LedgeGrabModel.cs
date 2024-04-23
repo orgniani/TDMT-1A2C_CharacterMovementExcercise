@@ -8,6 +8,8 @@ public class LedgeGrabModel
 
     [field: SerializeField] public float LineEndOffset { get; private set; } = 0.7f;
 
+    [field: SerializeField] public LayerMask FloorMask { get; private set; }
+
     [field: SerializeField] public float HangPositionForwardOffset { get; private set; } = -0.2f;
 
     [field: SerializeField] public float HangPositionUpOffset { get; private set; } = -0.8f;

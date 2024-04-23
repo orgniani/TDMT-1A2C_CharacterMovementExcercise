@@ -30,10 +30,22 @@ public class CharacterSetup : MonoBehaviour
             jump.enabled = true;
         }
 
+        else
+        {
+            Debug.LogError($"{name}: {nameof(jump)} or {nameof(jumpModelContainer)} is null!" +
+               $"\nDisabling component to avoid errors.");
+        }
+
         if (characterBody && bodyModelContainer)
         {
             characterBody.Model = bodyModelContainer.Model;
             characterBody.enabled = true;
+        }
+
+        else
+        {
+            Debug.LogError($"{name}: {nameof(characterBody)} or {nameof(bodyModelContainer)} is null!" +
+               $"\nDisabling component to avoid errors.");
         }
 
         if (characterBrain && brainModelContainer)
@@ -43,16 +55,34 @@ public class CharacterSetup : MonoBehaviour
             characterBrain.Acceleration = brainModelContainer.Model.Acceleration;
         }
 
+        else
+        {
+            Debug.LogError($"{name}: {nameof(characterBrain)} or {nameof(brainModelContainer)} is null!" +
+               $"\nDisabling component to avoid errors.");
+        }
+
         if (rotation && rotationModelContainer)
         {
             rotation.Model = rotationModelContainer.Model;
             rotation.enabled = true;
         }
 
+        else
+        {
+            Debug.LogError($"{name}: {nameof(rotation)} or {nameof(rotationModelContainer)} is null!" +
+               $"\nDisabling component to avoid errors.");
+        }
+
         if (ledgeGrab && ledgeGrabModelContainer)
         {
             ledgeGrab.Model = ledgeGrabModelContainer.Model;
             ledgeGrab.enabled = true;
+        }
+
+        else
+        {
+            Debug.LogError($"{name}: {nameof(ledgeGrab)} or {nameof(ledgeGrabModelContainer)} is null!" +
+               $"\nDisabling component to avoid errors.");
         }
     }
 }

@@ -4,8 +4,6 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class CharacterBody : MonoBehaviour
 {
-    [SerializeField] private LayerMask floorMask;
-
     private Rigidbody rigidBody;
 
     private MovementRequest currentMovement = MovementRequest.InvalidRequest;
@@ -14,7 +12,7 @@ public class CharacterBody : MonoBehaviour
 
     private readonly List<ImpulseRequest> impulseRequests = new();
 
-    private bool isOnAir = false;
+    private bool shouldBreak = false;
     private bool shouldCheckIfOnLand = true;
 
     public bool IsFalling { private set; get; }
@@ -76,8 +74,8 @@ public class CharacterBody : MonoBehaviour
         Vector3 lineOffset = new Vector3(0f, Model.FloorLineCheckOffset, 0f);
         Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - Model.FloorSphereCheckOffset, transform.position.z);
 
-        bool onFloorLineCheck = Physics.Raycast(transform.position + lineOffset, -transform.up, out hit, Model.MaxFloorDistance, floorMask);
-        bool onFloorSphereCheck = Physics.CheckSphere(spherePosition, Model.FloorSphereCheckRadius, floorMask, QueryTriggerInteraction.Ignore);
+        bool onFloorLineCheck = Physics.Raycast(transform.position + lineOffset, -transform.up, out hit, Model.MaxFloorDistance, Model.FloorMask);
+        bool onFloorSphereCheck = Physics.CheckSphere(spherePosition, Model.FloorSphereCheckRadius, Model.FloorMask, QueryTriggerInteraction.Ignore);
 
         IsFalling = !onFloorLineCheck && !onFloorSphereCheck;
 
@@ -88,13 +86,11 @@ public class CharacterBody : MonoBehaviour
 
         var accelerationVector = currentMovement.GetAccelerationVector();
 
-        if (!IsFalling)
+        if (IsOnLand)
         {
             accelerationVector = Vector3.ProjectOnPlane(accelerationVector, hit.normal);
             Debug.DrawRay(transform.position, accelerationVector, Color.cyan);
         }
-
-        else isOnAir = true;
 
         Debug.DrawRay(transform.position, accelerationVector, Color.red);
         rigidBody.AddForce(accelerationVector, ForceMode.Force);
@@ -116,6 +112,7 @@ public class CharacterBody : MonoBehaviour
             {
                 shouldCheckIfOnLand = true;
                 IsOnLand = false;
+                shouldBreak = true;
             }
         }
 
@@ -134,11 +131,12 @@ public class CharacterBody : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (floorMask == (floorMask | (1 << collision.gameObject.layer)))
+        if (Model.FloorMask == (Model.FloorMask | (1 << collision.gameObject.layer)))
         {
-            if (!isOnAir) return;
+            if (!shouldBreak) return;
+
             RequestBrake(Model.LandBrakeMultiplier);
-            isOnAir = false;
+            shouldBreak = false;
         }
     }
 

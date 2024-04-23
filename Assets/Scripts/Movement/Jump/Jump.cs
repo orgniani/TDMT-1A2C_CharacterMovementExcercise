@@ -1,14 +1,11 @@
 using System;
 using System.Collections;
 using UnityEngine;
+
 public class Jump : MonoBehaviour
 {
-    [Header("References")]
     [SerializeField] private CharacterBody body;
     [SerializeField] private CharacterBrain brain;
-
-    [Header("Logs")]
-    [SerializeField] private bool enableLog = true;
 
     private bool shouldJump = true;
     private bool shouldJumpOnRamp = true;
@@ -16,11 +13,6 @@ public class Jump : MonoBehaviour
     public event Action onJump = delegate { };
 
     public JumpModel Model { get; set; }
-
-    private void Reset()
-    {
-        body = GetComponent<CharacterBody>();
-    }
 
     private void Awake()
     {
@@ -47,7 +39,7 @@ public class Jump : MonoBehaviour
 
         if (!shouldJumpOnRamp) return false;
 
-        if (body.IsFalling) return false;
+        if (!body.IsOnLand) return false;
 
         StartCoroutine(JumpSequence(normalAcceleration));
 
@@ -91,9 +83,6 @@ public class Jump : MonoBehaviour
         {
             shouldJumpOnRamp = false;
         }
-
-        if (enableLog)
-            Debug.Log($"{name}: Collided with normal angle: {contactAngle}");
     }
 
 }

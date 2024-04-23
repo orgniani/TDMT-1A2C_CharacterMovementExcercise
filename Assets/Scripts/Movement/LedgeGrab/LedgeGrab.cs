@@ -4,19 +4,14 @@ using UnityEngine;
 
 public class LedgeGrab : MonoBehaviour
 {
-    [Header("References")]
     [SerializeField] private CharacterBody body;
     [SerializeField] private Collider bodyCollider;
     [SerializeField] private Collider feetCollider;
     [SerializeField] private RotationBasedOnVelocity rotatePlayer;
 
-    [Header("Floor Mask")]
-    [SerializeField] private LayerMask floorMask;
-
     private Rigidbody rigidBody;
 
     private bool shouldClimb = true;
-    private bool isStraightWall;
 
     public event Action onClimb = delegate { };
 
@@ -87,7 +82,7 @@ public class LedgeGrab : MonoBehaviour
         Vector3 lineDownStart = (transform.position + Vector3.up * Model.LineStartOffset) + transform.forward;
         Vector3 lineDownEnd = (transform.position + Vector3.up * Model.LineEndOffset) + transform.forward;
 
-        Physics.Linecast(lineDownStart, lineDownEnd, out downHit, floorMask);
+        Physics.Linecast(lineDownStart, lineDownEnd, out downHit, Model.FloorMask);
         Debug.DrawLine(lineDownStart, lineDownEnd);
 
         if (downHit.collider != null)
@@ -96,7 +91,7 @@ public class LedgeGrab : MonoBehaviour
             Vector3 lineFwdStart = new Vector3(transform.position.x, downHit.point.y - 0.1f, transform.position.z);
             Vector3 lineFwdEnd = new Vector3(transform.position.x, downHit.point.y - 0.1f, transform.position.z) + transform.forward;
 
-            Physics.Linecast(lineFwdStart, lineFwdEnd, out fwdHit, floorMask);
+            Physics.Linecast(lineFwdStart, lineFwdEnd, out fwdHit, Model.FloorMask);
             Debug.DrawLine(lineFwdStart, lineFwdEnd);
 
             if (fwdHit.collider != null)
@@ -112,6 +107,8 @@ public class LedgeGrab : MonoBehaviour
 
                 transform.position = hangingPosition;
                 transform.forward = -fwdHit.normal;
+
+                body.SetMovement(new MovementRequest(Vector3.zero, 0f, 0f));
 
                 StopMovingWhenHanging();
 
@@ -137,8 +134,6 @@ public class LedgeGrab : MonoBehaviour
 
     private IEnumerator ClimbSequence()
     {
-        body.SetMovement(new MovementRequest(Vector3.zero, 0f, 0f));
-
         shouldClimb = false;
         onClimb?.Invoke();
 

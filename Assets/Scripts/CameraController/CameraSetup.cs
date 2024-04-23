@@ -13,5 +13,11 @@ public class CameraSetup : MonoBehaviour
             followPlayer.Model = followPlayerModelContainer.Model;
             followPlayer.enabled = true;
         }
+
+        else
+        {
+            Debug.LogError($"{name}: {nameof(followPlayer)} or {nameof(followPlayerModelContainer)} is null!" +
+               $"\nDisabling component to avoid errors.");
+        }
     }
 }

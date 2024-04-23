@@ -2,16 +2,12 @@ using UnityEngine;
 
 public class CharacterBrain : MonoBehaviour
 {
-    [Header("References")]
     [SerializeField] private CharacterBody body;
     [SerializeField] private InputReader inputReader;
     [SerializeField] private Jump jump;
     [SerializeField] private LedgeGrab grab;
     [SerializeField] private FollowPlayer cameraController;
     [SerializeField] private Transform cameraTransform;
-
-    [Header("Logs")]
-    [SerializeField] private bool enableLog = true;
 
     private Vector3 desiredDirection;
     private Vector2 input;
@@ -98,14 +94,8 @@ public class CharacterBrain : MonoBehaviour
     {
         if (grab.IsHanging) return;
 
-        if (desiredDirection.magnitude > Mathf.Epsilon
-          && input.magnitude < Mathf.Epsilon)
+        if (desiredDirection.magnitude > Mathf.Epsilon && input.magnitude < Mathf.Epsilon)
         {
-            if (enableLog)
-            {
-                Debug.Log($"{nameof(desiredDirection)} magnitude: {desiredDirection.magnitude}\t{nameof(input)} magnitude: {input.magnitude}");
-            }
-
             body.RequestBrake(Model.MovementBreakMultiplier);
         }
 
